@@ -1,0 +1,26 @@
+
+//customers table
+CREATE TABLE customers (
+		cust_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+		name VARCHAR(30) NOT NULL,
+		password VARCHAR(20) NOT NULL,
+		email VARCHAR(30) NOT NULL,
+		phone VARCHAR(12) NOT NULL
+	);
+
+
+//request table
+CREATE TABLE request (
+		cust_id INT NOT NULL,
+		request_num INT AUTO_INCREMENT PRIMARY KEY,
+		request_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		item_desc VARCHAR(50) NOT NULL,
+		weight INT NOT NULL,
+		pickup_addr VARCHAR(50) NOT NULL,
+		pickup_suburb VARCHAR(20) NOT NULL,
+		pickup_date_time VARCHAR(20) NOT NULL,
+		receiver_name VARCHAR(30) NOT NULL,
+		del_addr VARCHAR(50) NOT NULL,
+		del_suburb VARCHAR(20) NOT NULL,
+		del_state VARCHAR(10) NOT NULL
+	);
