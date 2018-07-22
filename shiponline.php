@@ -1,5 +1,3 @@
-<!--Web Application Development COS80021 - Assignment1 - Phu Dao 101335460 -->
-
 <!DOCTYPE html>
 <html>
 <head>

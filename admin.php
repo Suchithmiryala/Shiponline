@@ -1,5 +1,3 @@
-<!--Web Application Development COS80021 - Assignment1 - Phu Dao 101335460 -->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,50 +16,49 @@
 					<label for="retrieve_date">Date to Retrieve</label>
 					<select name="day" required="required">
 						<option value="">Day</option>
-<?php
-for ($i=1; $i < 32; $i++) { 
-	echo "<option value='". $i. "'>".$i."</option>";
-}
-?>	
-				</select>
-				<select name="month" required="required">
-					<option value="">Month</option>
-					<option value="1">January</option>
-					<option value="2">February</option>
-					<option value="3">March</option>
-					<option value="4">April</option>
-					<option value="5">May</option>
-					<option value="6">June</option>
-					<option value="7">July</option>
-					<option value="8">August</option>
-					<option value="9">September</option>
-					<option value="10">October</option>
-					<option value="11">November</option>
-					<option value="12">December</option>
-				</select>
-				<select name="year" required="required">
-					<option value="">Year</option>
-<?php 
-$inputYear = date("Y");
-$nextYear = strtotime("next year");
-$nextYear = date("Y", $nextYear);
-echo "<option value='".$inputYear."'>".$inputYear."</option>";
-echo "<option value='".$nextYear."'>".$nextYear."</option>";
-?>
-				</select>
-			</p>
-			<p>
-				<input type="radio" name="retrieve_type" class="choice" value="request_date" required="required" checked="checked" />Request Date
-				<input type="radio" name="retrieve_type" class="choice" value="pickup_date" required="required" checked="checked" />
-				Pick-up Date
-			</p>
-			<p>
-				<input type="submit" value="Show" />
-			</p>
-			
-		</fieldset>
-	</form>
-	<br>
+						<?php
+						for ($i=1; $i < 32; $i++) { 
+							echo "<option value='". $i. "'>".$i."</option>";
+						}
+						?>	
+					</select>
+					<select name="month" required="required">
+						<option value="">Month</option>
+						<option value="1">January</option>
+						<option value="2">February</option>
+						<option value="3">March</option>
+						<option value="4">April</option>
+						<option value="5">May</option>
+						<option value="6">June</option>
+						<option value="7">July</option>
+						<option value="8">August</option>
+						<option value="9">September</option>
+						<option value="10">October</option>
+						<option value="11">November</option>
+						<option value="12">December</option>
+					</select>
+					<select name="year" required="required">
+						<option value="">Year</option>
+						<?php 
+						$inputYear = date("Y");
+						$nextYear = strtotime("next year");
+						$nextYear = date("Y", $nextYear);
+						echo "<option value='".$inputYear."'>".$inputYear."</option>";
+						echo "<option value='".$nextYear."'>".$nextYear."</option>";
+						?>
+					</select>
+				</p>
+				<p>
+					<input type="radio" name="retrieve_type" class="choice" value="request_date" required="required" checked="checked" />Request Date
+					<input type="radio" name="retrieve_type" class="choice" value="pickup_date" required="required" checked="checked" />
+					Pick-up Date
+				</p>
+				<p>
+					<input type="submit" value="Show" />
+				</p>			
+			</fieldset>
+		</form>
+		<br>
 
 <?php
 require_once("settings.php");	//connection info

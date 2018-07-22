@@ -1,5 +1,3 @@
-<!--Web Application Development COS80021 - Assignment1 - Phu Dao 101335460 -->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,19 +11,18 @@
 	<div class="container">
 		<h2 class="header center green-text">ShipOnline Request Page</h2>
 
-
-<?php
-$cust_id = 0;
-if (isset($_GET['name'])) {
-	$name = $_GET['name'];
-	$cust_id = $_GET['cust_id'];
-	echo "<p><em>Welcome $name</em></p>";
-}
-else {
-	$name = "anon";
-	$cust_id = 0;
-}
-?>		
+		<?php
+		$cust_id = 0;
+		if (isset($_GET['name'])) {
+			$name = $_GET['name'];
+			$cust_id = $_GET['cust_id'];
+			echo "<p><em>Welcome $name</em></p>";
+		}
+		else {
+			$name = "anon";
+			$cust_id = 0;
+		}
+		?>		
 
 		<form>
 			<fieldset>
@@ -156,284 +153,284 @@ else {
 	</script>
 	
 
-<?php
-require_once("settings.php");	//connection info
-$conn = @mysqli_connect($host,
-	$user,
-	$pwd,
-	$sql_db
-);
-$errMsg = "";	//error message to display
-$minute;
+	<?php
+	require_once("settings.php");	//connection info
+	$conn = @mysqli_connect($host,
+		$user,
+		$pwd,
+		$sql_db
+	);
+	$errMsg = "";	//error message to display
+	$minute;
 
 
-/**
-* Removes unncessary characters 
-*/
-function sanitise_input($data) {
-	$data = trim($data);
-	$data = stripslashes($data);
-	$data = htmlspecialchars($data);
-	return $data;
-}
-
-/**
-* Validate the pickup date to check that it is within the rules
-*/
-function validateDateTime($day, $month, $year, $hour, $minute) {
-	global $errMsg;
-	global $minute;
-	$valid = true;
-	if ($minute == "") {
-		$minute = "00";
+	/**
+	* Removes unncessary characters 
+	*/
+	function sanitise_input($data) {
+		$data = trim($data);
+		$data = stripslashes($data);
+		$data = htmlspecialchars($data);
+		return $data;
 	}
 
-	//check if the date is a valid date on the calendar
-	if (!checkdate($month, $day, $year)) {
-		$errMsg .= "<p>The preferred date is invalid</p>";
-		$valid = false;
-	}
-
-	//check if before 7:30
-	if ($hour == 7 && $minute < 30) {
-		$errMsg .= "<p>The preferred pickup time needs to be between 7:30 and 20:30</p>";
-		$valid = false;
-	}
-
-	//check if after 20:30
-	if ($hour == 20 && $minute > 30) {
-		$errMsg .= "<p>The preferred pickup time needs to be between 7:30 and 20:30</p>";
-		$valid = false;
-	}
-
-	//check if time is valid
-	$now = new DateTime();
-	$now = date_timestamp_get($now); 	//get unix timestamp
-	$pickup_time = strtotime($year."-".$month."-".$day." ".$hour.":".$minute.":00");
-	$diff = $pickup_time - $now;	//get difference between now and the pickup time
-
-	if ($diff < 86400) { 	//24 hours in seconds
-		$errMsg .= "<p>The preferred time needs to be at least 24 hours from request time<p>";
-		$valid = false;
-	}
-
-	return $valid;
-}
-
-/**
-* Calculate the price of the order
-*/
-function calcPrice($weight) {
-	$additional_wt = $weight - 2;
-	$cost = 10 + ($additional_wt * 2);
-	return number_format((float)$cost, 2, '.', '');
-}
-
-/**
-Creates the table customers in the database if one does not already exist
-*/
-function createTable() {
-	global $conn;
-	global $errMsg;
-	if (!$conn) {
-		$errMsg .= "<p>Database connection failure</p>";
-	} 
-	else {
-		$sql_table = "request";
-		$query = "CREATE TABLE IF NOT EXISTS $sql_table (
-				cust_id INT NOT NULL,
-				request_num INT AUTO_INCREMENT PRIMARY KEY,
-				request_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				item_desc VARCHAR(50) NOT NULL,
-				weight INT NOT NULL,
-				pickup_addr VARCHAR(50) NOT NULL,
-				pickup_suburb VARCHAR(20) NULL NULL,
-				pickup_date_time VARCHAR(20) NOT NULL,
-				receiver_name VARCHAR(30) NOT NULL,
-				del_addr VARCHAR(50) NOT NULL,
-				del_suburb VARCHAR(20) NOT NULL,
-				del_state VARCHAR(10) NOT NULL
-			)";
-		$result = mysqli_query($conn, $query);
-		if (!$result) {
-			$errMsg .= "<p>There was an error with the query</p>";
+	/**
+	* Validate the pickup date to check that it is within the rules
+	*/
+	function validateDateTime($day, $month, $year, $hour, $minute) {
+		global $errMsg;
+		global $minute;
+		$valid = true;
+		if ($minute == "") {
+			$minute = "00";
 		}
-	}		
-}
 
-/**
-* Save data to table on database
-*/
-function saveData($cust_id, $item_desc, $weight, $pickup_addr, $pickup_suburb, $pickup_date_time, $receiver_name, $del_addr, $del_suburb, $del_state) {
-	global $conn;
-	global $errMsg;
-	if (!$conn) {
-		echo "<p>Database connection failure</p>";
+		//check if the date is a valid date on the calendar
+		if (!checkdate($month, $day, $year)) {
+			$errMsg .= "<p>The preferred date is invalid</p>";
+			$valid = false;
+		}
+
+		//check if before 7:30
+		if ($hour == 7 && $minute < 30) {
+			$errMsg .= "<p>The preferred pickup time needs to be between 7:30 and 20:30</p>";
+			$valid = false;
+		}
+
+		//check if after 20:30
+		if ($hour == 20 && $minute > 30) {
+			$errMsg .= "<p>The preferred pickup time needs to be between 7:30 and 20:30</p>";
+			$valid = false;
+		}
+
+		//check if time is valid
+		$now = new DateTime();
+		$now = date_timestamp_get($now); 	//get unix timestamp
+		$pickup_time = strtotime($year."-".$month."-".$day." ".$hour.":".$minute.":00");
+		$diff = $pickup_time - $now;	//get difference between now and the pickup time
+
+		if ($diff < 86400) { 	//24 hours in seconds
+			$errMsg .= "<p>The preferred time needs to be at least 24 hours from request time<p>";
+			$valid = false;
+		}
+
+		return $valid;
 	}
-	else {
-		$sql_table = "request";
-		$query = "INSERT INTO $sql_table (
-			cust_id,
-			item_desc,
-			weight,
-			pickup_addr,
-			pickup_suburb,
-			pickup_date_time,
-			receiver_name,
-			del_addr,
-			del_suburb,
-			del_state
-		) VALUES (
-			'$cust_id',
-			'$item_desc',
-			'$weight',
-			'$pickup_addr',
-			'$pickup_suburb',
-			'$pickup_date_time',
-			'$receiver_name',
-			'$del_addr',
-			'$del_suburb',
-			'$del_state'
-		)";
 
-		$result = mysqli_query($conn, $query);
-		if ($result) {
-			$request_num = mysqli_insert_id($conn);
+	/**
+	* Calculate the price of the order
+	*/
+	function calcPrice($weight) {
+		$additional_wt = $weight - 2;
+		$cost = 10 + ($additional_wt * 2);
+		return number_format((float)$cost, 2, '.', '');
+	}
+
+	/**
+	* Creates the table customers in the database if one does not already exist
+	*/
+	function createTable() {
+		global $conn;
+		global $errMsg;
+		if (!$conn) {
+			$errMsg .= "<p>Database connection failure</p>";
+		} 
+		else {
+			$sql_table = "request";
+			$query = "CREATE TABLE IF NOT EXISTS $sql_table (
+					cust_id INT NOT NULL,
+					request_num INT AUTO_INCREMENT PRIMARY KEY,
+					request_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					item_desc VARCHAR(50) NOT NULL,
+					weight INT NOT NULL,
+					pickup_addr VARCHAR(50) NOT NULL,
+					pickup_suburb VARCHAR(20) NULL NULL,
+					pickup_date_time VARCHAR(20) NOT NULL,
+					receiver_name VARCHAR(30) NOT NULL,
+					del_addr VARCHAR(50) NOT NULL,
+					del_suburb VARCHAR(20) NOT NULL,
+					del_state VARCHAR(10) NOT NULL
+				)";
+			$result = mysqli_query($conn, $query);
+			if (!$result) {
+				$errMsg .= "<p>There was an error with the query</p>";
+			}
+		}		
+	}
+
+	/**
+	* Save data to table on database
+	*/
+	function saveData($cust_id, $item_desc, $weight, $pickup_addr, $pickup_suburb, $pickup_date_time, $receiver_name, $del_addr, $del_suburb, $del_state) {
+		global $conn;
+		global $errMsg;
+		if (!$conn) {
+			echo "<p>Database connection failure</p>";
 		}
 		else {
-			$errMsg .= "<p>There was an error with saving data</p>";
+			$sql_table = "request";
+			$query = "INSERT INTO $sql_table (
+				cust_id,
+				item_desc,
+				weight,
+				pickup_addr,
+				pickup_suburb,
+				pickup_date_time,
+				receiver_name,
+				del_addr,
+				del_suburb,
+				del_state
+			) VALUES (
+				'$cust_id',
+				'$item_desc',
+				'$weight',
+				'$pickup_addr',
+				'$pickup_suburb',
+				'$pickup_date_time',
+				'$receiver_name',
+				'$del_addr',
+				'$del_suburb',
+				'$del_state'
+			)";
+
+			$result = mysqli_query($conn, $query);
+			if ($result) {
+				$request_num = mysqli_insert_id($conn);
+			}
+			else {
+				$errMsg .= "<p>There was an error with saving data</p>";
+			}
+		}
+		return $request_num;
+	}
+
+	function getEmail($cust_id) {
+		global $conn;
+		global $errMsg;
+		if (!$conn) {
+			echo "<p>Database connection failure</p>";
+		}
+		else {
+			$sql_table = "customers";
+			$query = "SELECT email FROM customers WHERE cust_id = $cust_id";
+			$result = mysqli_query($conn, $query);
+			$row = mysqli_fetch_assoc($result);
+			$email = $row['email'];
+			return $email;
 		}
 	}
-	return $request_num;
-}
 
-function getEmail($cust_id) {
-	global $conn;
-	global $errMsg;
-	if (!$conn) {
-		echo "<p>Database connection failure</p>";
-	}
-	else {
-		$sql_table = "customers";
-		$query = "SELECT email FROM customers WHERE cust_id = $cust_id";
-		$result = mysqli_query($conn, $query);
-		$row = mysqli_fetch_assoc($result);
-		$email = $row['email'];
-		return $email;
-	}
-}
+	function emailCustomer($name, $email, $cost, $pickup_date_time, $request_num) {
+		$to = $email;
+		$subject = "Shipping request with ShipOnline";
+		$message = "
+		<html>
+		<head>
+			<title>Email</title>
+		</head>
+		<body>
+			<p>Dear $name</p>
+			<br>
+			<p>Thank you for using ShipOnline!</p>
+			<p>Your request number is $request_num</p>
+			<p>The cost is $cost</p>
+			<p>We will pick up the item at $pickup_date_time</p>
+			<br>
+			<p>Kind Regards,</p>
+			<p>ShipOnline team</p>
+		</body>
+		</html>
+		";
+		$headers = "MIME-Version: 1.0". "\r\n";
+		$headers .= "Content-type:text/html;charset=UTF-8"."\r\n";
 
-function emailCustomer($name, $email, $cost, $pickup_date_time, $request_num) {
-	$to = $email;
-	$subject = "Shipping request with ShipOnline";
-	$message = "
-	<html>
-	<head>
-		<title>Email</title>
-	</head>
-	<body>
-		<p>Dear $name</p>
-		<br>
-		<p>Thank you for using ShipOnline!</p>
-		<p>Your request number is $request_num</p>
-		<p>The cost is $cost</p>
-		<p>We will pick up the item at $pickup_date_time</p>
-		<br>
-		<p>Kind Regards,</p>
-		<p>ShipOnline team</p>
-	</body>
-	</html>
-	";
-	$headers = "MIME-Version: 1.0". "\r\n";
-	$headers .= "Content-type:text/html;charset=UTF-8"."\r\n";
+		if (mail($to, $subject, $message, $headers, "-r 101335460@student.swin.edu.au")) {
+			$emailDispatch = true;
+		} 
+		else {
+			$emailDispatch = false;
+		}
 
-	if (mail($to, $subject, $message, $headers, "-r 101335460@student.swin.edu.au")) {
-	 	$emailDispatch = true;
-	 } 
-	else {
-		$emailDispatch = false;
+		return $emailDispatch;
 	}
 
-	return $emailDispatch;
-}
 
+	function main() {
+		global $errMsg;
+		global $minute;
+		$attempted = false;		//check if form has been attempted
 
-function main() {
-	global $errMsg;
-	global $minute;
-	$attempted = false;		//check if form has been attempted
+		if (isset($_GET["item_desc"])) {
+			$item_desc = $_GET["item_desc"];
+			$name = $_GET["name"];
+			$cust_id = $_GET["cust_id"];
+			$weight = $_GET["weight"];
+			$pickup_addr = $_GET["pickup_addr"];
+			$pickup_suburb = $_GET["pickup_suburb"];
+			$day = $_GET["day"];
+			$month = $_GET["month"];
+			$year = $_GET["year"];
+			$hour = $_GET["hour"];
+			$minute = $_GET["minute"];
+			$receiver_name = $_GET["receiver_name"];
+			$del_addr = $_GET["del_addr"];
+			$del_suburb = $_GET["del_suburb"];
+			$del_state = $_GET["del_state"];
+			$attempted = true;
+		}
 
-	if (isset($_GET["item_desc"])) {
-		$item_desc = $_GET["item_desc"];
-		$name = $_GET["name"];
-		$cust_id = $_GET["cust_id"];
-		$weight = $_GET["weight"];
-		$pickup_addr = $_GET["pickup_addr"];
-		$pickup_suburb = $_GET["pickup_suburb"];
-		$day = $_GET["day"];
-		$month = $_GET["month"];
-		$year = $_GET["year"];
-		$hour = $_GET["hour"];
-		$minute = $_GET["minute"];
-		$receiver_name = $_GET["receiver_name"];
-		$del_addr = $_GET["del_addr"];
-		$del_suburb = $_GET["del_suburb"];
-		$del_state = $_GET["del_state"];
-		$attempted = true;
-	}
+		if ($attempted && $cust_id != 0) {
+			//sanitise input of vulnerable input fields
+			$item_desc = sanitise_input($item_desc);
+			$pickup_addr = sanitise_input($pickup_addr);
+			$pickup_suburb = sanitise_input($pickup_suburb);
+			$receiver_name = sanitise_input($receiver_name); 
+			$del_addr = sanitise_input($del_addr);
+			$del_suburb = sanitise_input($del_suburb);
 
-	if ($attempted && $cust_id != 0) {
-		//sanitise input of vulnerable input fields
-		$item_desc = sanitise_input($item_desc);
-		$pickup_addr = sanitise_input($pickup_addr);
-		$pickup_suburb = sanitise_input($pickup_suburb);
-		$receiver_name = sanitise_input($receiver_name); 
-		$del_addr = sanitise_input($del_addr);
-		$del_suburb = sanitise_input($del_suburb);
+			//calculate cost
+			$cost = calcPrice($weight);
 
-		//calculate cost
-		$cost = calcPrice($weight);
-
-		//validate data
-		if (validateDateTime($day, $month, $year, $hour, $minute)) {
-			//format the date for database
-			if ($day < 10) {
-				$day = str_pad($day, 2, "0", STR_PAD_LEFT);
-			}
-			if ($month < 10) {
-				$month = str_pad($month, 2, "0", STR_PAD_LEFT);
-			}
-			$pickup_date_time = $year. "-". $month. "-". $day. ",". $hour. ":". $minute;
-			createTable();
-			//save data if data is valid
-			$request_num = saveData($cust_id, $item_desc, $weight, $pickup_addr, $pickup_suburb, $pickup_date_time, $receiver_name, $del_addr, $del_suburb, $del_state);
-			echo "<font color='blue'>The request number is ". $request_num. ". We will pick up the item at ". $hour. ":". $minute. " on ". $day. "/". $month. "/". $year. ". The cost is $".$cost. ".</font>";
-			//get email address
-			$email = getEmail($cust_id);
-			if (emailCustomer($name, $email, $cost, $pickup_date_time, $request_num)) {
+			//validate data
+			if (validateDateTime($day, $month, $year, $hour, $minute)) {
+				//format the date for database
+				if ($day < 10) {
+					$day = str_pad($day, 2, "0", STR_PAD_LEFT);
+				}
+				if ($month < 10) {
+					$month = str_pad($month, 2, "0", STR_PAD_LEFT);
+				}
+				$pickup_date_time = $year. "-". $month. "-". $day. ",". $hour. ":". $minute;
+				createTable();
+				//save data if data is valid
+				$request_num = saveData($cust_id, $item_desc, $weight, $pickup_addr, $pickup_suburb, $pickup_date_time, $receiver_name, $del_addr, $del_suburb, $del_state);
+				echo "<font color='blue'>The request number is ". $request_num. ". We will pick up the item at ". $hour. ":". $minute. " on ". $day. "/". $month. "/". $year. ". The cost is $".$cost. ".</font>";
+				//get email address
+				$email = getEmail($cust_id);
+				if (emailCustomer($name, $email, $cost, $pickup_date_time, $request_num)) {
+					
+				}
+				else {
+					echo "<p>Email could not be sent</p>";
+				}
 				
 			}
 			else {
-				echo "<p>Email could not be sent</p>";
+				echo "<font color='red'>".$errMsg."</font>";
 			}
-			
+		}
+		elseif ($attempted && $cust_id == 0) {
+			echo "<font color='red'>Please log in first</font>";
 		}
 		else {
-			echo "<font color='red'>".$errMsg."</font>";
+
 		}
-	}
-	elseif ($attempted && $cust_id == 0) {
-		echo "<font color='red'>Please log in first</font>";
-	}
-	else {
 
 	}
 
-}
-
-main();
-mysqli_close($conn);
-?>
+	main();
+	mysqli_close($conn);
+	?>
 	</div>
 
 </body>
