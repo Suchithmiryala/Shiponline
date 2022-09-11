@@ -1,6 +1,6 @@
 
 ShipOnline - version 1.0 02/04/2018
-Author - Phu Dao - 101335460
+Author - Suchith reddy miryala - 104207643
 
 This system helps to manage online orders. It contains 5 php files.
 1. shiponline.php: The home page that allows the user to navigate to other pages in the system.
